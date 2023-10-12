@@ -7,7 +7,7 @@ import UserContext from './UserContext';
 function Landing() {
   const [user, setUser] = useState(null);
   return (
-    <UserContext.Provider value = {{ user, setUser}} >
+    <UserContext.Provider value = {{ user, setUser }} >
       <div className="container mt-5">
       
       <div className="d-flex justify-content-center mb-4">

@@ -10,7 +10,8 @@ function Registration() {
  const { setUser } = useContext(UserContext);
 
   const [formData, setFormData] = useState({
-    accName: '',
+    id: 11,
+    name: '',
     disName: '',
     email: '',
     phone: '',
@@ -23,7 +24,6 @@ function Registration() {
 
   const history = useNavigate();
 
-//
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prevstate => ({
@@ -86,8 +86,8 @@ const isAdult = () => {
                     type="text" 
                     placeholder="User name" 
                     style={{ width: '150px', margin: '10px' }}
-                    name = "accName"
-                    value = {formData.accName}
+                    name = "name"
+                    value = {formData.name}
                     onChange={handleChange}
                     pattern="[a-zA-Z][a-zA-Z0-9]*" 
                     title="Account name can only be upper or lower case letters and numbers, but may not start with a number." 

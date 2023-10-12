@@ -8,17 +8,16 @@ function Post() {
     const [newArticle, setNewArticle] = useState('');
     const [uploadedFile, setUploadedFile] = useState(null);
     const [newArticles, setNewArticles] = useState([]);
-    const currentUserId = localStorage.getItem('userId') || 1;
-    const [userStatus, setUserStatus] = useState('Users fun status');
+    const currentUserId = Number(JSON.parse(localStorage.getItem('user')).id) || 2;
+    const [userStatus, setUserStatus] = useState('');
     const [tempStatus, setTempStatus] = useState('Users fun status');
     const [tempfollowUser, setTempFollowUser] = useState('');
     const [followUser, setFollowUser] = useState([
-        {id: 2, name: 'Friend 2', status: 'A fun status!', img:'img5.jpg'},
-        {id: 3, name: 'Friend 3', status: 'A fun status!', img:'img6.jpg'},
-        {id: 4, name: 'Friend 4', status: 'A fun status!', img:'img7.jpg'},
+        
     ]);
     const [userList, setuserlist] = useState([]);  
     const [allPosts, setAllPosts] = useState([]);
+    const [currentUser, setCurrentUser] = useState({});
 
     const baseTime = Date.now();
 
@@ -51,6 +50,35 @@ function Post() {
                         timestamp: baseTime - post.id * 1000,
                     };
                 });
+
+                console.log(currentUserId, "id");
+                let follower = [];
+                if (currentUserId === 10) {
+
+                    follower = [
+                        {id: 1, name: getUserNameById(1), status: getUserStatusById(1), img:'img5.jpg'},
+                        {id: 2, name: getUserNameById(2), status: getUserStatusById(2), img:'img6.jpg'},
+                        {id: 3, name: getUserNameById(3), status: getUserStatusById(3), img:'img7.jpg'},
+                    ]
+
+                }
+                else if (currentUserId != 11){
+                    follower = [
+                        {id: currentUserId + 1, name: getUserNameById(currentUserId + 1), status: getUserStatusById(currentUserId + 1), img:'img5.jpg'},
+                        {id: currentUserId + 2, name: getUserNameById(currentUserId + 2), status: getUserStatusById(currentUserId + 2), img:'img6.jpg'},
+                        {id: currentUserId + 3, name: getUserNameById(currentUserId + 3), status: getUserStatusById(currentUserId + 3), img:'img7.jpg'},
+                    ]
+                }
+                else{
+                    follower = []
+                }
+
+                setFollowUser(follower);
+
+                const currentUser = getUserResponse.data.find(user => user.id === currentUserId);
+                setCurrentUser(currentUser);
+
+                console.log("currentUser",currentUser);
                 
                 const userPosts = allPosts.filter(post => post.userId === currentUserId);
 
@@ -62,6 +90,7 @@ function Post() {
                 setAllPosts(allPosts);
 
                 setuserlist(getUserResponse.data);
+                setuserlist(previousList => [...previousList, JSON.parse(localStorage.getItem('user'))])
                 console.log(userList)
                 
             }catch(err){
@@ -84,12 +113,27 @@ function Post() {
         return user ? user.id : null;
     }
 
+    const getUserInfoById = (userId) => {
+        const user = userList.find(user => user.id === userId);
+        return user ? user : null;
+    }
+
+    const getUserNameById = (userId) => {
+        const user = userList.find(user => user.id === userId);
+        return user ? user.name : 'Unknown';
+    }
+
+    const getUserStatusById = (userId) => {
+        const user = userList.find(user => user.id === userId);
+        return user ? user.company.catchPhrase : 'Unknown';
+    }
+
     
 
     const [searchQuery, setSearchQuery] = useState('');
     const targetUserId = getUserIdByName(searchQuery);
 
-    console.log(targetUserId);
+    console.log("targetUserId",targetUserId);
 
     
     const filteredPosts = allPosts.filter(post => 
@@ -131,10 +175,6 @@ function Post() {
         setFollowUser(prevFriends => prevFriends.filter(friend => friend.id !== id))
     }
 
-    
-
-    
-
 
     return (
         <div className='container-fluid'>
@@ -143,11 +183,14 @@ function Post() {
                
                 <div className="my-4">
                     <img src="img4.jpg" alt="User" width="200"/>
-                    <h5>Username:</h5>{currentUserId}
+                    <h5>Username:</h5>{getuserName(currentUserId)}
                 </div>
 
                 <div>User status:</div>
-                <div>{userStatus}</div>
+                <div>
+    {userStatus ? userStatus : (currentUser && currentUser.company ? currentUser.company.catchPhrase : 'Loading...')}
+</div>
+
                 <input type='text' placeholder='New Status' onChange={handleStatusChange}></input>
                 <button onClick={updateStatus}>Update</button>
 
@@ -218,7 +261,7 @@ function Post() {
                 <div key={post.id}>
                     <h3>{post.title}</h3>
                     <p>{post.body}</p>
-                    {post.id < 4 && <img src={`img${post.id}.jpg`} width={200}></img>}
+                    {<img src={`img1.jpg`} width={200}></img>}
                     <div>{new Date(post.timestamp).toLocaleString()}</div>
                     <div>Author: {getuserName(post.userId)}</div>
                     <button>Comment</button>
