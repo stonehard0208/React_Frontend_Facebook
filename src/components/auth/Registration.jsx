@@ -68,7 +68,7 @@ const isAdult = () => {
         let existingUsers = JSON.parse(localStorage.getItem('userList') || "[]");
     
        
-        const newID = existingUsers.length + 1;
+        const newID = existingUsers.length ? existingUsers[existingUsers.length - 1].id + 1 : 1;
     
         
         let updatedFormData = { ...formData, id: newID };
