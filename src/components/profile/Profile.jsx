@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Navbar, Button, Form, Image, Col, Row, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import UserContext from '../auth/UserContext';
@@ -9,6 +9,14 @@ function Profile() {
    const { user, setUser } = useContext(UserContext);
    const [localUser, setLocalUser] = useState({ ...user, password2: '' });
    const [updateAttempted, setUpdateAttempted] = useState(false);
+
+   useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+        setUser(JSON.parse(storedUser));
+    }
+}, []);
+
 
 
    const maskPassword = () => {
