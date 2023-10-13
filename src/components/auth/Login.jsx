@@ -31,60 +31,45 @@ function Login() {
   }, []);
 
   const handleSubmit = () => {
-    let user = users.find(u => u.username === username); // Declare user here
+    const registeredUser = JSON.parse(localStorage.getItem('user'));
 
-    const registered = localStorage.getItem('user');
-    if (registered) {
-        if (JSON.parse(registered).password1 === passwordRef.current.value) {
-            localStorage.setItem('user', JSON.stringify({
-                id: user.id,
-                username: user.username,
-                email: user.email,
-                phone: user.phone,
-                zipCode: user.address.zipcode,
-                password1: JSON.parse(registered).password1
-            }));
-
-            setUser({
-                id: user.id,
-                username: user.username,
-                email: user.email,
-                phone: user.phone,
-                zipCode: user.address.zipcode,
-                password1: JSON.parse(registered).password1
-            });
+    
+    if (registeredUser && registeredUser.username === username) {
+        if (registeredUser.password1 === passwordRef.current.value) {
+            setUser(registeredUser);
             history('/main');
+            return;
         } else {
             alert('Wrong password');
             return;
         }
-    } else if (user) {
-        if (user.address.street !== passwordRef.current.value) {
+    }
+
+    
+    const placeholderUser = users.find(u => u.username === username);
+    if (placeholderUser) {
+        if (placeholderUser.address && placeholderUser.address.street === passwordRef.current.value) { 
+            const newUser = {
+                id: placeholderUser.id,
+                username: placeholderUser.username,
+                email: placeholderUser.email,
+                phone: placeholderUser.phone,
+                zipCode: placeholderUser.address.zipcode,
+                password1: placeholderUser.address.street 
+            };
+            setUser(newUser);
+            localStorage.setItem('user', JSON.stringify(newUser)); 
+            history('/main');
+            return;
+        } else {
             alert('Wrong password');
             return;
         }
-        localStorage.setItem('user', JSON.stringify({
-            id: user.id,
-            username: user.username,
-            email: user.email,
-            phone: user.phone,
-            zipCode: user.address.zipcode,
-            password1: user.address.street
-        }));
-
-        setUser({
-            id: user.id,
-            username: user.username,
-            email: user.email,
-            phone: user.phone,
-            zipCode: user.address.zipcode,
-            password1: user.address.street
-        });
-        history('/main');
-    } else {
-        alert('User not found');
     }
+
+    alert('User not found');
 }
+
 
   return (
     <Card>

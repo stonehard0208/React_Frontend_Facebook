@@ -10,7 +10,7 @@ function Registration() {
  const { setUser } = useContext(UserContext);
 
   const [formData, setFormData] = useState({
-    id: 11,
+    id: 0,
     username: '',
     disName: '',
     email: '',
@@ -54,28 +54,33 @@ const isAdult = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        
+    
         if (!isAdult()) {
             alert("User must be 18 years or older to register");
             return;
         }
-        
+    
         if (!isPasswordEqual()) {
             alert("Confirmation password does not match the input password");
             return;
         }
-
+    
         let existingUsers = JSON.parse(localStorage.getItem('userList') || "[]");
-        localStorage.setItem('userList', JSON.stringify([...existingUsers, formData]));
-
-
-        setUser(formData);
-        localStorage.setItem('user', JSON.stringify(formData));
-
+    
+       
+        const newID = existingUsers.length + 1;
+    
+        
+        let updatedFormData = { ...formData, id: newID };
+    
+        localStorage.setItem('userList', JSON.stringify([...existingUsers, updatedFormData]));
+    
+        setUser(updatedFormData);
+        localStorage.setItem('user', JSON.stringify(updatedFormData));
+    
         history('/main');
-
-
     };
+    
 
     return (
         <Card>

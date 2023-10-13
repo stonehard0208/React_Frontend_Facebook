@@ -138,7 +138,7 @@ return (
                 <Card.Title>Current Info</Card.Title>
                 <div className="row">
                     <div className="col-md-12">
-                        <strong>Username:</strong> {user.username ? user.username : null}
+                        <strong>Username:</strong> {user.username ? user.username : "Unknown"}
                     </div>
                 </div>
                 <div className="row">
