@@ -7,11 +7,15 @@ import UserContext from '../auth/UserContext';
 
 function Profile() {
    const { user, setUser } = useContext(UserContext);
-   const [localUser, setLocalUser] = useState(user);
+   const [localUser, setLocalUser] = useState({ ...user, password2: '' });
+   const [updateAttempted, setUpdateAttempted] = useState(false);
 
-   const maskPassword = (password) => {
-    return password.replace(/./g, '*');
-   }
+
+   const maskPassword = () => {
+    const passwordToMask = updateAttempted ? localUser.password2 : user.password1;
+    return passwordToMask.replace(/./g, '*');
+}
+
 
    const isAdult = (dob) => {
     
@@ -36,209 +40,219 @@ const isPasswordEqual = () => {
 const handleLocalUserChange = (e) => {
     const { name, value } = e.target;
 
-    console.log(name, value)
-  
-    if (name === 'name' && !/^[a-zA-Z][a-zA-Z0-9]*$/.test(value)) {
-        alert("Username can only be upper or lower case letters and numbers, but may not start with a number.");
-        return;
-    }
-
-    if (name === 'email' && !/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/.test(value)) {
-        alert("Email format error.");
-        return;
-    }
-
-    if (name === 'phone' && !/^\d{3}-\d{3}-\d{4}$/.test(value)) {
-        alert("Phone format wrong, should be xxx-xxx-xxxx.");
-        return;
-    }
-
-    if (name === 'zipCode' && !/^[0-9]{5}$/.test(value)) {
-        alert("Zip code format is 5 digit number.");
-        return;
-    }
-
     setLocalUser(prevUser => ({
-                ...prevUser,
-                [name] : value
-            }));
+        ...prevUser,
+        [name] : value
+    }));
 
-    
-
-
-    
+    if (name === 'password1') {
+        setUpdateAttempted(false);
+    }
 }
 
 
 const handleUpdate = () => {
-    // if (!isAdult()) {
-    //     alert("User must be 18 years or older to register");
-    //     return;
-    // }
     
-    // if (!isPasswordEqual()) {
-    //     alert("Confirmation password does not match the input password");
-    //     return;
-    // }
+    const { username, email, phone, zipCode, dob, password1, password2 } = localUser;
+    if (username && !/^[a-zA-Z][a-zA-Z0-9]*$/.test(username)) {
+        alert("Username can only be upper or lower case letters and numbers, but may not start with a number.");
+        return;
+    }
+
+    if (email && !/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/.test(email)) {
+        alert("Email format error.");
+        return;
+    }
+
+    if (phone && !/^\d{3}-\d{3}-\d{4}$/.test(phone)) {
+        alert("Phone format wrong, should be xxx-xxx-xxxx.");
+        return;
+    }
+
+    if (zipCode && !/^[0-9]{5}$/.test(zipCode)) {
+        alert("Zip code format is 5 digit number.");
+        return;
+    }
+
+    if (dob && !isAdult(dob)) {
+        alert("User must be 18 years or older to register");
+        return;
+    }
+
+    if(!password1){
+        alert("Original password cannot be empty.");
+        return;
+    }
+
+    if (user.password1 != localUser.password1) {
+        alert("Your input original password is wrong.");
+        return;
+    }
 
     setUser(localUser);
+    setUpdateAttempted(true);
     
 };
 
-  return (
-    <UserContext.Provider value = {{ user }} >
-        <div>
-      
-      <Navbar bg="dark" variant="dark">
-        <Navbar.Brand as={Link} to="/main">Get back to Main</Navbar.Brand>
-      </Navbar>
-
-      
-      <Row className="mt-4">
-        <Col md={6} className="text-center d-flex flex-column align-items-center">
-          <Image src="/ValhallaArticle.jpg" width='400px' height='200px' />
-          <label  className="btn btn-primary mt-2">Upload New Picture <input type="file" style={{ display: 'none'}}/></label>
-          
-        </Col>
-        <Col md={6} className="text-center">
-          <Image src="/logo.jpg" width="400px" height='200px'/>
-        </Col>
-      </Row>
-
-    <Row className="mt-4">
-        <Col md={6} className="text-center d-flex flex-column align-items-center">
-            <Card style={{width: '400px', margin: '0 auto'}}>
-            <Card.Body>
-    <Card.Title>Current Info</Card.Title>
-    <div className="row">
-        <div className="col-md-8">
-            <strong>Username:</strong> {user.name}
-        </div>
-    </div>
-    <div className="row">
-        <div className="col-md-8">
-            <strong>Email:</strong> {user.email}
-        </div>
-    </div>
-    <div className="row">
-        <div className="col-md-8">
-            <strong>Phone Number:</strong> {user.phone}
-        </div>
-    </div>
-    <div className="row">
-        <div className="col-md-8">
-            <strong>Zipcode:</strong> {user.zipCode}
-        </div>
-    </div>
-    <div className="row">
-        <div className="col-md-8">
-            <strong>Date of Birth:</strong> {user.dob}
-        </div>
-    </div>
-    <div className="row">
-        <div className="col-md-8">
-            <strong>Password:</strong> {maskPassword(user.password1)}
-        </div>
-    </div>
-</Card.Body>
-
-            </Card>
-        </Col>
-
-        <Col md={6} className="text-center d-flex flex-column align-items-center">
-            <Card style={{width: '400px', margin: '0 auto'}}>
-                <Card.Body>
-                    <Card.Title>Update Info</Card.Title>
-                    <Form>
-            <div className="row">
-                <div className="col-md-6">
-                <Form.Group>
-                    <Form.Control 
-                        type="text"  
-                        style={{ width: '150px', margin: '10px' }} 
-                        name = "name"
-                        value = {localUser.name} 
-                        onChange={handleLocalUserChange}
-                        title="Account name can only be upper or lower case letters and numbers, but may not start with a number." />
-                </Form.Group>
-                </div>
-                <div className="col-md-6">
-                <Form.Group>
-                    <Form.Control 
-                        type="email"
-                        name="email"
-                        style={{ width: '150px' , margin: '10px' }} 
-                        value = {localUser.email} 
-                        onChange={handleLocalUserChange}/>
-                </Form.Group>
-                </div>
-                <div className="col-md-6">
-                <Form.Group>
-                    <Form.Control 
-                        type="text" 
-                        name='phone'
-                        style={{ width: '150px' , margin: '10px' }} 
-                        value = {localUser.phone} 
-                        onChange={handleLocalUserChange}/>
-                </Form.Group>
-                </div>
-                <div className="col-md-6">
-                <Form.Group>
-                    <Form.Control 
-                        type="date" 
-                        style={{ width: '150px' , margin: '10px' }} 
-                        name="dob"
-                        value = {localUser.dob} 
-                        onChange={handleLocalUserChange}/>
-                </Form.Group>
-                </div>
-                <div className="col-md-6">
-                <Form.Group>
-                    <Form.Control 
-                        type="text"
-                        name = "zipCode" 
-                        style={{ width: '150px' , margin: '10px' }} 
-                        value = {localUser.zipCode} 
-                        onChange={handleLocalUserChange} />
-                </Form.Group>
-                </div>
-
-            </div>
-            <div className="row">
-                <div className="col-md-6">
-                <Form.Group>
-                    <Form.Control 
-                        type="password"
-                        name="password1"
-                        style={{ width: '150px' , margin: '10px' }} 
-                        value = {localUser.password1} 
-                        onChange={handleLocalUserChange}/>
-                </Form.Group>
-                </div>
-                <div className="col-md-6">
-                <Form.Group>
-                    <Form.Control 
-                        type="password" 
-                        name="password2"
-                        style={{ width: '150px' , margin: '10px' }} 
-                        value = {localUser.password2} 
-                        onChange={handleLocalUserChange}/>
-                </Form.Group>
-                </div>
-            </div>
-            <Button className="btn btn-primary mt-3" onClick={handleUpdate}>Update</Button>
+return (
+    <UserContext.Provider value={{ user }}>
+        <Navbar bg="dark" variant="dark">
+                <Navbar.Brand as={Link} to="/main">Get back to Main</Navbar.Brand>
+            </Navbar>
+        <div className="container mt-4">
             
-            </Form>
-                </Card.Body>
-            </Card>
-        </Col>
-    </Row>        
 
-      
+
+            <Row className="mt-4">
+            <Col md={6} className="text-center d-flex flex-column align-items-center mb-4">
+    <div style={{height: '200px', width: '100%', overflow: 'hidden'}}>
+        <Image src="/ValhallaArticle.jpg" style={{height: '100%', objectFit: 'cover'}} className="img-fluid mb-3" alt="Profile" />
     </div>
-     </UserContext.Provider>
-    
-  );
+    <p></p>
+    <label className="btn btn-primary">
+        Upload New Picture 
+        <input type="file" style={{ display: 'none' }} />
+    </label>
+</Col>
+
+<Col md={6} className="text-center d-flex flex-column align-items-center mb-4">
+    <div style={{height: '200px', width: '100%', overflow: 'hidden'}}>
+        <Image src="/logo.jpg" style={{height: '100%', objectFit: 'cover'}} className="img-fluid mb-3" alt="Profile" />
+    </div>
+</Col>
+
+            </Row>
+
+            <Row className="mt-4">
+    <Col md={6} className="d-flex flex-column align-items-center mb-4">
+        <Card style={{ width: '100%' }}>
+            <Card.Body>
+                <Card.Title>Current Info</Card.Title>
+                <div className="row">
+                    <div className="col-md-12">
+                        <strong>Username:</strong> {user.username ? user.username : null}
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-md-12">
+                        <strong>Email:</strong> {user.email ? user.email : null}
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-md-12">
+                        <strong>Phone Number:</strong> {user.phone ? user.phone : null}
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-md-12">
+                        <strong>Zipcode:</strong> {user.zipCode ? user.zipCode : null}
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-md-12">
+                        <strong>Date of Birth:</strong> {user.dob ? user.dob : null}
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-md-12">
+                        <strong>Password:</strong> {maskPassword()}
+                    </div>
+                </div>
+            </Card.Body>
+        </Card>
+    </Col>
+
+    <Col md={5} className="text-center d-flex flex-column align-items-center">
+        <Card style={{ width: '100%' }}>
+            <Card.Body>
+                <Card.Title>Update Info</Card.Title>
+                <Form>
+                    <div className="row">
+                        <div className="col-md-6">
+                            <Form.Group>
+                                <Form.Control 
+                                    type="text"  
+                                    style={{ width: '150px', margin: '10px' }} 
+                                    name = "username"
+                                    value = {localUser.username} 
+                                    onChange={handleLocalUserChange}
+                                    title="Account name can only be upper or lower case letters and numbers, but may not start with a number." />
+                            </Form.Group>
+                        </div>
+                        <div className="col-md-6">
+                            <Form.Group>
+                                <Form.Control 
+                                    type="email"
+                                    name="email"
+                                    style={{ width: '150px' , margin: '10px' }} 
+                                    value = {localUser.email} 
+                                    onChange={handleLocalUserChange}/>
+                            </Form.Group>
+                        </div>
+                        <div className="col-md-6">
+                            <Form.Group>
+                                <Form.Control 
+                                    type="text" 
+                                    name='phone'
+                                    style={{ width: '150px' , margin: '10px' }} 
+                                    value = {localUser.phone} 
+                                    onChange={handleLocalUserChange}/>
+                            </Form.Group>
+                        </div>
+                        <div className="col-md-6">
+                            <Form.Group>
+                                <Form.Control 
+                                    type="date" 
+                                    style={{ width: '150px' , margin: '10px' }} 
+                                    name="dob"
+                                    value = {localUser.dob} 
+                                    onChange={handleLocalUserChange}/>
+                            </Form.Group>
+                        </div>
+                        <div className="col-md-6">
+                            <Form.Group>
+                                <Form.Control 
+                                    type="text"
+                                    name = "zipCode" 
+                                    style={{ width: '150px' , margin: '10px' }} 
+                                    value = {localUser.zipCode} 
+                                    onChange={handleLocalUserChange} />
+                            </Form.Group>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-md-6">
+                            <Form.Group>
+                                <Form.Control 
+                                    type="password"
+                                    name="password1"
+                                    style={{ width: '150px' , margin: '10px' }} 
+                                    value = {localUser.password1} 
+                                    onChange={handleLocalUserChange}/>
+                            </Form.Group>
+                        </div>
+                        <div className="col-md-6">
+                            <Form.Group>
+                                <Form.Control 
+                                    type="password" 
+                                    name="password2"
+                                    style={{ width: '150px' , margin: '10px' }} 
+                                    // value = {localUser.password2} 
+                                    onChange={handleLocalUserChange}/>
+                            </Form.Group>
+                        </div>
+                    </div>
+                    <Button className="btn btn-primary mt-3" onClick={handleUpdate}>Update</Button>
+                </Form>
+            </Card.Body>
+        </Card>
+    </Col>
+</Row>
+
+        </div>
+    </UserContext.Provider>
+);
+
 }
 
 export default Profile;

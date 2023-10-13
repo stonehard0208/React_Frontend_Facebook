@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
-// import { Link } from 'react-router-dom';
 import { Card, Form, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'
@@ -10,9 +9,8 @@ function Login() {
   const history = useNavigate();
 
   const [users, setUsers] = useState([]);
-  const [email, setEmail] = useState('');
-
-  const passwordRef = useRef(null);
+  const [username, setUsername] = useState('');
+ const passwordRef = useRef(null);
 
   const { setUser } = useContext(UserContext);
 
@@ -33,62 +31,90 @@ function Login() {
   }, []);
 
   const handleSubmit = () => {
+    let user = users.find(u => u.username === username); // Declare user here
+
     const registered = localStorage.getItem('user');
-    const user = users.find(user => user.email === email);
-    if (!user && !registered) {
-      alert('User not found');
-      return;
-    }
-    else{
-      if (registered){
-        if (JSON.parse(registered).password1 === passwordRef.current.value){
-          history('/main');
-      }
-      else{
-        console.log(registered)
-        console.log(registered.password1, passwordRef.current.value)
-        alert('Incorrect password');
-        return;
-      }
-      
-    }
-    else{
-      localStorage.setItem('userId', user.id);
-      console.log(
-        "user", user
-      )
-      setUser({
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        zipCode: user.address.zipcode,
+    if (registered) {
+        if (JSON.parse(registered).password1 === passwordRef.current.value) {
+            localStorage.setItem('user', JSON.stringify({
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                phone: user.phone,
+                zipCode: user.address.zipcode,
+                password1: JSON.parse(registered).password1
+            }));
 
-      });
-      history('/main');
-    }
-  }
-    
+            setUser({
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                phone: user.phone,
+                zipCode: user.address.zipcode,
+                password1: JSON.parse(registered).password1
+            });
+            history('/main');
+        } else {
+            alert('Wrong password');
+            return;
+        }
+    } else if (user) {
+        if (user.address.street !== passwordRef.current.value) {
+            alert('Wrong password');
+            return;
+        }
+        localStorage.setItem('user', JSON.stringify({
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            phone: user.phone,
+            zipCode: user.address.zipcode,
+            password1: user.address.street
+        }));
 
-  }
+        setUser({
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            phone: user.phone,
+            zipCode: user.address.zipcode,
+            password1: user.address.street
+        });
+        history('/main');
+    } else {
+        alert('User not found');
+    }
+}
+
   return (
     <Card>
-      <Card.Body>
-        <Card.Title>Login</Card.Title>
-        <Form>
-        <div className="row">
-                <div className="col-md-6">
-                <Form.Group>
-                    <Form.Control type="email" placeholder="User email" style={{ width: '150px', margin: '10px' }} required onChange={e => (setEmail(e.target.value))}/>
-                </Form.Group>
-                </div>
-                <div className="col-md-6">
-                <Form.Group>
-                    <Form.Control type="password" placeholder="Password" style={{ width: '150px' , margin: '10px' }} required ref={passwordRef}/>
-                </Form.Group>
-                </div>
-            </div>
-            <Button onClick = {handleSubmit}className="btn btn-primary mt-3">Login</Button>
-        </Form>
+            <Card.Body>
+                <Card.Title>Login</Card.Title>
+                <Form>
+                    <div className="row">
+                        <div className="col-md-6 col-12 mb-3">
+                            <Form.Group>
+                                <Form.Control 
+                                    type="text" 
+                                    placeholder="User name" 
+                                    className="w-100" 
+                                    required 
+                                    onChange={e => (setUsername(e.target.value))} />
+                            </Form.Group>
+                        </div>
+                        <div className="col-md-6 col-12 mb-3">
+                            <Form.Group>
+                                <Form.Control 
+                                    type="password" 
+                                    placeholder="Password" 
+                                    className="w-100" 
+                                    required 
+                                    ref={passwordRef} />
+                            </Form.Group>
+                        </div>
+                    </div>
+                    <Button onClick={handleSubmit} className="btn btn-primary mt-3">Login</Button>
+                </Form>
       </Card.Body>
     </Card>
   );

@@ -11,7 +11,7 @@ function Registration() {
 
   const [formData, setFormData] = useState({
     id: 11,
-    name: '',
+    username: '',
     disName: '',
     email: '',
     phone: '',
@@ -65,6 +65,10 @@ const isAdult = () => {
             return;
         }
 
+        let existingUsers = JSON.parse(localStorage.getItem('userList') || "[]");
+        localStorage.setItem('userList', JSON.stringify([...existingUsers, formData]));
+
+
         setUser(formData);
         localStorage.setItem('user', JSON.stringify(formData));
 
@@ -73,135 +77,128 @@ const isAdult = () => {
 
     };
 
-  return (
+    return (
+        <Card>
+            <Card.Body>
+                <Card.Title>Register</Card.Title>
+                <Form onSubmit={handleSubmit}>
+                    <div className="row">
+                        <div className="col-md-6 col-12 mb-3">
+                            <Form.Group>
+                                <Form.Control 
+                                    type="text" 
+                                    placeholder="User name" 
+                                    className="w-100"
+                                    name="username"
+                                    value={formData.username}
+                                    onChange={handleChange}
+                                    pattern="[a-zA-Z][a-zA-Z0-9]*" 
+                                    title="Account name can only be upper or lower case letters and numbers, but may not start with a number." 
+                                    required
+                                />
+                            </Form.Group>
+                        </div>
+                        <div className="col-md-6 col-12 mb-3">
+                            <Form.Group>
+                                <Form.Control 
+                                    type="email" 
+                                    placeholder="Email" 
+                                    className="w-100"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </Form.Group>
+                        </div>
+                        <div className="col-md-6 col-12 mb-3">
+                            <Form.Group>
+                                <Form.Control 
+                                    type="text" 
+                                    placeholder="Display Name(optional)" 
+                                    className="w-100"
+                                    name="disName"
+                                    value={formData.disName}
+                                    onChange={handleChange}
+                                />
+                            </Form.Group>
+                        </div>
+                        <div className="col-md-6 col-12 mb-3">
+                            <Form.Group>
+                                <Form.Control 
+                                    type="text" 
+                                    placeholder="Phone Number" 
+                                    className="w-100"
+                                    name="phone"
+                                    value={formData.phone}
+                                    onChange={handleChange}
+                                    pattern="^\d{3}-\d{3}-\d{4}$" 
+                                    title="Format is xxx-xxx-xxxx"
+                                    required
+                                />
+                            </Form.Group>
+                        </div>
+                        <div className="col-md-6 col-12 mb-3">
+                            <Form.Group>
+                                <Form.Control 
+                                    type="date" 
+                                    placeholder="Date of Birth"
+                                    className="w-100"
+                                    name="dob"
+                                    value={formData.dob}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </Form.Group>
+                        </div>
+                        <div className="col-md-6 col-12 mb-3">
+                            <Form.Group>
+                                <Form.Control 
+                                    type="text" 
+                                    placeholder="ZipCode" 
+                                    className="w-100"
+                                    name="zipCode"
+                                    value={formData.zipCode}
+                                    onChange={handleChange}
+                                    required 
+                                    pattern="[0-9]{5}" 
+                                    title="Format is 5 digit numbers"
+                                />
+                            </Form.Group>
+                        </div>
+                        <div className="col-md-6 col-12 mb-3">
+                            <Form.Group>
+                                <Form.Control 
+                                    type="password" 
+                                    placeholder="User Password" 
+                                    className="w-100"
+                                    value={formData.password1}
+                                    onChange={handleChange}
+                                    name="password1" 
+                                    required
+                                />
+                            </Form.Group>
+                        </div>
+                        <div className="col-md-6 col-12 mb-3">
+                            <Form.Group>
+                                <Form.Control 
+                                    type="password" 
+                                    placeholder="User Password" 
+                                    className="w-100"
+                                    value={formData.password2}
+                                    onChange={handleChange}
+                                    name="password2" 
+                                    required
+                                />
+                            </Form.Group>
+                        </div>
+                    </div>
+                    <Button type='submit' className="btn btn-primary mt-3">Register</Button>
+                </Form>
+            </Card.Body>
+        </Card>
+    );
     
-    <Card>
-      <Card.Body>
-        <Card.Title>Register</Card.Title>
-            <Form onSubmit={handleSubmit}>
-            <div className="row">
-                <div className="col-md-6">
-                <Form.Group>
-                    <Form.Control 
-                    type="text" 
-                    placeholder="User name" 
-                    style={{ width: '150px', margin: '10px' }}
-                    name = "name"
-                    value = {formData.name}
-                    onChange={handleChange}
-                    pattern="[a-zA-Z][a-zA-Z0-9]*" 
-                    title="Account name can only be upper or lower case letters and numbers, but may not start with a number." 
-                    required 
-                     />
-                </Form.Group>
-                </div>
-                <div className="col-md-6">
-                <Form.Group>
-                    <Form.Control 
-                    type="email" 
-                    placeholder="Email" 
-                    style={{ width: '150px', margin: '10px' }}
-                    name = "email"
-                    value = {formData.email}
-                    onChange={handleChange}
-                    required 
-                     />
-                </Form.Group>
-                </div>
-            
-               
-            </div>
-            <div className="row">
-            <div className="col-md-6">
-                <Form.Group>
-                    <Form.Control 
-                    type="text" 
-                    placeholder="Display Name(optional)" 
-                    style={{ width: '150px' , margin: '10px' }}
-                    name="disName"
-                    value={formData.disName}
-                    onChange={handleChange}
-                     />
-                </Form.Group>
-                </div>
-                <div className="col-md-6">
-                <Form.Group>
-                    <Form.Control 
-                    type="text" 
-                    placeholder="Phone Number" 
-                    style={{ width: '150px' , margin: '10px' }}
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    pattern="^\d{3}-\d{3}-\d{4}$" 
-                    title="Format is xxx-xxx-xxxx"
-                    required
-                     />
-                </Form.Group>
-                </div>
-            </div>
-            <div className="row">
-                <div className="col-md-6">
-                <Form.Group>
-                    <Form.Control 
-                    type="date" 
-                    placeholder="Date of Birth"
-                    name = "dob"
-                    value = {formData.dob}
-                    onChange={handleChange}
-                    style={{ width: '150px' , margin: '10px' }}
-                    required />
-                </Form.Group>
-                </div>
-                <div className="col-md-6">
-                <Form.Group>
-                    <Form.Control 
-                    type="text" 
-                    placeholder="ZipCode" 
-                    style={{ width: '150px' , margin: '10px' }}
-                    name = "zipCode"
-                    value = {formData.zipCode}
-                    onChange={handleChange}
-                    required 
-                    pattern="[0-9]{5}" 
-                    title="Format is 5 digit numbers"
-                     />
-                </Form.Group>
-                </div>
-            </div>
-            <div className="row">
-                <div className="col-md-6">
-                <Form.Group>
-                    <Form.Control 
-                    type="password" 
-                    placeholder="User Password" 
-                    style={{ width: '150px' , margin: '10px' }} 
-                    value = {formData.password1}
-                    onChange={handleChange}
-                    name="password1" 
-                    required/>
-                </Form.Group>
-                </div>
-                <div className="col-md-6">
-                <Form.Group>
-                <Form.Control 
-                    type="password" 
-                    placeholder="User Password" 
-                    style={{ width: '150px' , margin: '10px' }} 
-                    value = {formData.password2}
-                    onChange={handleChange}
-                    name="password2" 
-                    required/>
-                </Form.Group>
-                </div>
-            </div>
-            <Button type='submit' className="btn btn-primary mt-3">Register</Button>
-        
-            </Form>
-
-      </Card.Body>
-    </Card>
-  );
 }
 
 export default Registration;
