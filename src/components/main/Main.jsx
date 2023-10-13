@@ -3,6 +3,7 @@ import { Navbar, Button, Form, Image, Col, Row, Card } from 'react-bootstrap';
 import Post from './Post';
 import { Link, useNavigate } from 'react-router-dom';
 import UserContext from '../auth/UserContext';
+import axios from 'axios'
 
 function Main({ user, onLogout }) {
     const { setUser } = useContext(UserContext);
@@ -17,6 +18,24 @@ function Main({ user, onLogout }) {
     const handleRedirectProfile = () => {
         history('/profile');
     }
+
+    useEffect(() => {
+
+        const fetchUserResponse = async() => {
+            try{
+                const response = await axios(`https://jsonplaceholder.typicode.com/users`);
+                localStorage.setItem('userList', JSON.stringify(response.data));
+            }
+            catch(error){
+                console.log('Error: ', error)
+            }
+        
+            }
+
+        fetchUserResponse();
+        
+
+    });
     
     return (
         <div>
