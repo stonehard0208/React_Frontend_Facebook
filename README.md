@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ## Net id: 
 yc153
 ## Front end:
