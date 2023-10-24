@@ -9,7 +9,10 @@ import { useState } from 'react';
 
 
 function App() {
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
+  const storedUser = localStorage.getItem('user');
+  const initialUser = storedUser && storedUser !== '[object Object]' ? JSON.parse(storedUser) : null;
+  const [user, setUser] = useState(initialUser);
+
 
   return (
     <>

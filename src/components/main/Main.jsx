@@ -19,23 +19,6 @@ function Main({ user, onLogout }) {
         history('/profile');
     }
 
-    useEffect(() => {
-
-        const fetchUserResponse = async() => {
-            try{
-                const response = await axios(`https://jsonplaceholder.typicode.com/users`);
-                localStorage.setItem('userList', JSON.stringify(response.data));
-            }
-            catch(error){
-                console.log('Error: ', error)
-            }
-        
-            }
-
-        fetchUserResponse();
-        
-
-    });
     
     return (
         <div>

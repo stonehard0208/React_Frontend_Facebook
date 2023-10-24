@@ -6,22 +6,38 @@ import UserContext from '../auth/UserContext';
 
 
 function Profile() {
-   const { user, setUser } = useContext(UserContext);
+//    const { user, setUser } = useContext(UserContext);
+    const user = JSON.parse(localStorage.getItem('user') || "[]");
    const [localUser, setLocalUser] = useState({ ...user, password2: '' });
    const [updateAttempted, setUpdateAttempted] = useState(false);
+   const setUser = (updatedUser) => {
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    setLocalUser({...updatedUser, password2: ''});
+};
 
-   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-        setUser(JSON.parse(storedUser));
-    }
+useEffect(() => {
+    const handleStorageChange = (e) => {
+        if (e.key === 'user') {
+            const updatedUser = JSON.parse(e.newValue || "[]");
+            setLocalUser({...updatedUser, password2: ''});
+        }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+        window.removeEventListener('storage', handleStorageChange);
+    };
 }, []);
 
+
+   
 
 
    const maskPassword = () => {
     const passwordToMask = updateAttempted ? localUser.password2 : user.password1;
-    return passwordToMask.replace(/./g, '*');
+    const finalPassword = passwordToMask ? passwordToMask : '';
+    return finalPassword.replace(/./g, '*');
 }
 
 
@@ -96,14 +112,18 @@ const handleUpdate = () => {
         alert("Your input original password is wrong.");
         return;
     }
+    const updatedUser = { ...localUser, password1: password2 ? password2 : password1 };
 
-    setUser(localUser);
+    setUser(updatedUser);
     setUpdateAttempted(true);
     
 };
+if (!user) {
+    return <div>Loading user data...</div>;
+}
 
 return (
-    <UserContext.Provider value={{ user }}>
+    <div>
         <Navbar bg="dark" variant="dark">
                 <Navbar.Brand as={Link} to="/main">Get back to Main</Navbar.Brand>
             </Navbar>
@@ -153,7 +173,9 @@ return (
                 </div>
                 <div className="row">
                     <div className="col-md-12">
-                        <strong>Zipcode:</strong> {user.zipCode ? user.zipCode : null}
+                        
+                        <strong>Zipcode:</strong> {user?.address?.zipcode ?? null}
+
                     </div>
                 </div>
                 <div className="row">
@@ -163,7 +185,7 @@ return (
                 </div>
                 <div className="row">
                     <div className="col-md-12">
-                        <strong>Password:</strong> {maskPassword()}
+                        <strong>Password:</strong> {user ? maskPassword() : null}
                     </div>
                 </div>
             </Card.Body>
@@ -258,7 +280,7 @@ return (
 </Row>
 
         </div>
-    </UserContext.Provider>
+  </div>
 );
 
 }

@@ -67,16 +67,23 @@ const isAdult = () => {
     
         let existingUsers = JSON.parse(localStorage.getItem('userList') || "[]");
     
-       
+        console.log("Existing users:", existingUsers);
+
         const newID = existingUsers.length ? existingUsers[existingUsers.length - 1].id + 1 : 1;
-    
-        
         let updatedFormData = { ...formData, id: newID };
-    
-        localStorage.setItem('userList', JSON.stringify([...existingUsers, updatedFormData]));
-    
-        setUser(updatedFormData);
+        
+        const updatedUsersList = [...existingUsers, updatedFormData];
+        
+        console.log("Updated users:", updatedUsersList);
+        
+        localStorage.setItem('userList', JSON.stringify(updatedUsersList));
+
+        console.log(updatedUsersList)
+        console.log(updatedFormData)
         localStorage.setItem('user', JSON.stringify(updatedFormData));
+
+        // localStorage.setItem('user',JSON.stringify(updatedFormData));
+        
     
         history('/main');
     };
@@ -92,7 +99,7 @@ const isAdult = () => {
                             <Form.Group>
                                 <Form.Control 
                                     type="text" 
-                                    placeholder="User name" 
+                                    placeholder="Input Username" 
                                     className="w-100"
                                     name="username"
                                     value={formData.username}

@@ -7,6 +7,8 @@ import UserContext from './UserContext';
 
 function Login() {
   const history = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const [users, setUsers] = useState([]);
   const [username, setUsername] = useState('');
@@ -16,23 +18,33 @@ function Login() {
 
   useEffect(() => {
     const fetchUserResponse = async() => {
-      try{
-        const response = await axios(`https://jsonplaceholder.typicode.com/users`);
-        setUsers(response.data);
+      try {
+          const response = await fetch(`https://jsonplaceholder.typicode.com/users`);
+          if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+  
+          const user = await response.json();
+          // console.log("response", response);
+          // console.log(user);
+          
+          setUsers(user);
+          setLoading(false);
+      } catch (error) {
+          console.error("There was an error fetching the users", error);
+          setLoading(false);
       }
-      catch(error){
-        console.log('Error: ', error)
-      }
-
-    }
-
+  }
+  
     fetchUserResponse();
-    
-  }, []);
+}, []);
+
 
   const handleSubmit = () => {
-    const registeredUser = JSON.parse(localStorage.getItem('user'));
+    const registeredUser = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
 
+    // console.log(username);
+    // console.log(passwordRef.current.value);
     
     if (registeredUser && registeredUser.username === username) {
         if (registeredUser.password1 === passwordRef.current.value) {
@@ -45,8 +57,9 @@ function Login() {
         }
     }
 
-    
+    // console.log("users", users);
     const placeholderUser = users.find(u => u.username === username);
+    // console.log("placeholderUser",placeholderUser);
     if (placeholderUser) {
         if (placeholderUser.address && placeholderUser.address.street === passwordRef.current.value) { 
             const newUser = {
@@ -55,30 +68,44 @@ function Login() {
                 email: placeholderUser.email,
                 phone: placeholderUser.phone,
                 zipCode: placeholderUser.address.zipcode,
-                password1: placeholderUser.address.street 
+                password1: placeholderUser.address.street,
+                password2: placeholderUser.address.street,
+                status:placeholderUser.company.catchPhrase,
+                company: {
+                  catchPhrase:placeholderUser.company.catchPhrase
+                }
             };
+            // console.log("newuwer", newUser);
             setUser(newUser);
             localStorage.setItem('user', JSON.stringify(newUser)); 
-            history('/main');
+            navigate('/main');
             return;
         } else {
             alert('Wrong password');
             return;
         }
     }
+    else{
+      alert('User not found');
+    }
 
-    alert('User not found');
+    
+}
+
+if(loading){
+  return <div>Loading...</div>
 }
 
 
   return (
     <Card>
             <Card.Body>
-                <Card.Title>Login</Card.Title>
+                <Card.Title>Login Here</Card.Title>
                 <Form>
                     <div className="row">
                         <div className="col-md-6 col-12 mb-3">
                             <Form.Group>
+                              <Form.Label>Username</Form.Label>
                                 <Form.Control 
                                     type="text" 
                                     placeholder="User name" 
@@ -89,6 +116,7 @@ function Login() {
                         </div>
                         <div className="col-md-6 col-12 mb-3">
                             <Form.Group>
+                              <Form.Label>Password</Form.Label>
                                 <Form.Control 
                                     type="password" 
                                     placeholder="Password" 
@@ -98,7 +126,7 @@ function Login() {
                             </Form.Group>
                         </div>
                     </div>
-                    <Button onClick={handleSubmit} className="btn btn-primary mt-3">Login</Button>
+                    <Button onClick={handleSubmit} className="btn btn-primary mt-3" type='button'>Login</Button>
                 </Form>
       </Card.Body>
     </Card>
