@@ -44,10 +44,6 @@ function Post() {
         setNewArticle('');
 
     }
-
-    const userExists = (userId, userList) => {
-        return userList.some(user => user.id === userId);
-    }
     
     
 
@@ -118,16 +114,6 @@ function Post() {
         setFollowUser(follower);
     },[]);
 
-    
-
-    const getuserName = (userId) => {
-        // console.log("userId", userId);
-        const user = userList.find(user => user.id === Number(userId));
-        return user ? user.username : 'Unknown';
-    }
-
-    
-   
 
     const getUserIdByName = (userName) => {
         // console.log(userName);
@@ -208,9 +194,9 @@ function Post() {
         setFollowUser(prevFriends => prevFriends.filter(friend => friend.id !== id))
     }
 
-    // if (loading) { 
-    //     return <div>Loading...</div>;
-    // }
+    if (loading) { 
+        return <div>Loading...</div>;
+    }
     return (
         <div className='container-fluid'>
     <div className='row mt-4'>
@@ -281,7 +267,7 @@ function Post() {
                     <p>{article.body}</p>
                     {article.image && <img src={URL.createObjectURL(article.image)} alt="Uploaded" className="img-fluid mb-2" width={200} />}
                     <div className="mb-2">{new Date(article.timestamp).toLocaleString()}</div>
-                    <div className="mb-2">Author: {getuserName(currentUserId)}</div>
+                    <div className="mb-2">Author: {getUserNameById(currentUserId)}</div>
                     <button className="btn btn-secondary btn-sm mr-2">Comment</button>
                     <button className="btn btn-secondary btn-sm">Edit</button>
                 </div>
@@ -293,7 +279,7 @@ function Post() {
                     <p>{post.body}</p>
                     <img src={`img1.jpg`} className="img-fluid mb-2" width={200} />
                     <div className="mb-2">{new Date(post.timestamp).toLocaleString()}</div>
-                    <div className="mb-2">Author: {getuserName(post.userId)}</div>
+                    <div className="mb-2">Author: {getUserNameById(post.userId)}</div>
                     <button className="btn btn-secondary btn-sm mr-2">Comment</button>
                     <button className="btn btn-secondary btn-sm mr-2" onClick={() => toggleComments(post.id)}>
                         {visibleComments[post.id] ? 'Hide Comments' : 'Show Comments'}
@@ -306,9 +292,7 @@ function Post() {
                             <ul>
                             
                                     <li key={index}>test comment</li>
-                                    <li key={index}>test comment</li>
-                                    <li key={index}>test comment</li>
-                                    <li key={index}>test comment</li>
+                                    
 
                             </ul>
                         </div>

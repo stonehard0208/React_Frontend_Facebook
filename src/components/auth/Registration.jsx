@@ -5,9 +5,11 @@ import UserContext from './UserContext';
 
 
 
+
 function Registration() {
 
  const { setUser } = useContext(UserContext);
+ const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     id: 0,
@@ -22,7 +24,6 @@ function Registration() {
     timeStamp: Date.now()
   });
 
-  const history = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -85,14 +86,14 @@ const isAdult = () => {
         // localStorage.setItem('user',JSON.stringify(updatedFormData));
         
     
-        history('/main');
+        navigate('/main');
     };
     
 
     return (
         <Card>
             <Card.Body>
-                <Card.Title>Register</Card.Title>
+                <Card.Title>Register User</Card.Title>
                 <Form onSubmit={handleSubmit}>
                     <div className="row">
                         <div className="col-md-6 col-12 mb-3">
@@ -195,7 +196,7 @@ const isAdult = () => {
                             <Form.Group>
                                 <Form.Control 
                                     type="password" 
-                                    placeholder="User Password" 
+                                    placeholder="Confirm Password" 
                                     className="w-100"
                                     value={formData.password2}
                                     onChange={handleChange}

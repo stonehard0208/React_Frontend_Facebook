@@ -3,7 +3,7 @@ import { Navbar, Button, Form, Image, Col, Row, Card } from 'react-bootstrap';
 import Post from './Post';
 import { Link, useNavigate } from 'react-router-dom';
 import UserContext from '../auth/UserContext';
-import axios from 'axios'
+
 
 function Main({ user, onLogout }) {
     const { setUser } = useContext(UserContext);

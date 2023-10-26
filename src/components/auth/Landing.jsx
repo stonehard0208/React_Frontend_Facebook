@@ -18,6 +18,7 @@ function Landing() {
               }
   
               const user = await response.json();
+              localStorage.setItem("userList", JSON.stringify(user));
               setUser(user);
           } catch (error) {
               console.error("There was an error fetching the users", error);

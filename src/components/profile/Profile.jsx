@@ -1,12 +1,9 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Navbar, Button, Form, Image, Col, Row, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import UserContext from '../auth/UserContext';
-
 
 
 function Profile() {
-//    const { user, setUser } = useContext(UserContext);
     const user = JSON.parse(localStorage.getItem('user') || "[]");
    const [localUser, setLocalUser] = useState({ ...user, password2: '' });
    const [updateAttempted, setUpdateAttempted] = useState(false);
@@ -41,25 +38,6 @@ useEffect(() => {
 }
 
 
-   const isAdult = (dob) => {
-    
-    const currentTime = new Date();
-    const [birthYear, birthMonth, birthDate] = dob.split("-").map(Number);
-
-    let age = currentTime.getFullYear() - birthYear;
-
-    if (currentTime.getMonth() + 1 < birthMonth || 
-        (currentTime.getMonth() + 1 === birthMonth && currentTime.getDate() < birthDate)) {
-        age -= 1;
-    }
-
-    return age >= 18;
-};
-
-const isPasswordEqual = () => {
-    const { password1, password2 } = localUser;
-    return password1 === password2;
-};
 
 const handleLocalUserChange = (e) => {
     const { name, value } = e.target;
@@ -98,10 +76,6 @@ const handleUpdate = () => {
         return;
     }
 
-    if (dob && !isAdult(dob)) {
-        alert("User must be 18 years or older to register");
-        return;
-    }
 
     if(!password1){
         alert("Original password cannot be empty.");
@@ -118,9 +92,7 @@ const handleUpdate = () => {
     setUpdateAttempted(true);
     
 };
-if (!user) {
-    return <div>Loading user data...</div>;
-}
+
 
 return (
     <div>
@@ -158,23 +130,23 @@ return (
                 <Card.Title>Current Info</Card.Title>
                 <div className="row">
                     <div className="col-md-12">
-                        <strong>Username:</strong> {user.username ? user.username : "Unknown"}
+                        <strong>Username:</strong> <div role="displayUsername">{user.username ? user.username : "Unknown"}</div>
                     </div>
                 </div>
                 <div className="row">
                     <div className="col-md-12">
-                        <strong>Email:</strong> {user.email ? user.email : null}
+                        <strong>Email:</strong><div role="displayEmail">{user.email ? user.email : null}</div> 
                     </div>
                 </div>
                 <div className="row">
                     <div className="col-md-12">
-                        <strong>Phone Number:</strong> {user.phone ? user.phone : null}
+                        <strong>Phone Number:</strong> <div role="displayPhone">{user.phone ? user.phone : null}</div>
                     </div>
                 </div>
                 <div className="row">
                     <div className="col-md-12">
                         
-                        <strong>Zipcode:</strong> {user?.address?.zipcode ?? null}
+                        <strong>Zipcode:</strong> <div role="displayZipcode">{user?.address?.zipcode ?? null}</div>
 
                     </div>
                 </div>

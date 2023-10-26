@@ -6,7 +6,6 @@ import UserContext from './UserContext';
 
 
 function Login() {
-  const history = useNavigate();
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -49,7 +48,7 @@ function Login() {
     if (registeredUser && registeredUser.username === username) {
         if (registeredUser.password1 === passwordRef.current.value) {
             setUser(registeredUser);
-            history('/main');
+            navigate('/main');
             return;
         } else {
             alert('Wrong password');

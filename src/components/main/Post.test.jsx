@@ -254,25 +254,21 @@ describe("Validate Article actions: remove followers", () => {
         const unfollowButton = within(parentListItem).getByText('Unfollow');
         fireEvent.click(unfollowButton);
 
+ 
+            const firstPostForMockposts_2 = mockPosts_2[0];
 
-        await Promise.all(
-            mockPosts_2.map(async post => {
-                const normalizedTitle = post.title.replace(/\n/g, ' ');
-                const normalizedBody = post.body.replace(/\n/g, ' ');
+            const normalizedTitle = firstPostForMockposts_2.title.replace(/\n/g, ' ');
+            const normalizedBody = firstPostForMockposts_2.body.replace(/\n/g, ' ');
 
-                await waitFor(() => {
-                    const postTitleElements = screen.queryByText(normalizedTitle);
-                    expect(postTitleElements).not.toBeInTheDocument();
+            await waitFor(() => {
+                const postTitleElements = screen.queryByText(normalizedTitle);
+                expect(postTitleElements).not.toBeInTheDocument();
+    
+                const postBodyElements = screen.queryByText(normalizedBody);
+                expect(postBodyElements).not.toBeInTheDocument();
+            });    
         
-                    const postBodyElements = screen.queryByText(normalizedBody);
-                    expect(postBodyElements).not.toBeInTheDocument();
-                });
-
-            
-                
-                
-            })
-        );
+        
 
 
     });

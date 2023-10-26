@@ -27,19 +27,33 @@ describe("Validate Profile action for user1", () => {
             </UserContext.Provider>
         </Router>
     )
-
+ 
     afterEach(cleanup);
 
     
     it("should fetch the logged in user's profile", async () => {
         await waitFor(() => {
-            expect(screen.getByText(`${user.username}`)).toBeInTheDocument();
-            expect(screen.getByText(`${user.email}`)).toBeInTheDocument();
-            expect(screen.getByText(`${user.phone}`)).toBeInTheDocument();
-            expect(screen.getByText(`${user.address.zipcode}`)).toBeInTheDocument();
+            const userName = screen.getByRole('displayUsername');
+            const userNameEle = within(userName).getByText(user.username);
+            expect(userNameEle).toBeInTheDocument();
+
+            const userEmail = screen.getByRole('displayEmail');
+            const userEmailEle = within(userEmail).getByText(user.email);
+            expect(userEmailEle).toBeInTheDocument();
+
+            const userPhone = screen.getByRole('displayPhone');
+            const userPhoneEle = within(userPhone).getByText(user.phone);
+            expect(userPhoneEle).toBeInTheDocument();
+
+            const userZipcode = screen.getByRole('displayZipcode');
+            const userZipcodeEle = within(userZipcode).getByText(user.address.zipcode);
+            expect(userZipcodeEle).toBeInTheDocument();
+
+            fireEvent.click(screen.getByText('Update'));
         });
-        
 
     });
+
     localStorage.removeItem("user");
 });
+

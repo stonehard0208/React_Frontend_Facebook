@@ -59,7 +59,7 @@ describe('Unit tests for Validate Authentication(Log out)', () => {
         expect(localStorage.removeItem).toHaveBeenCalledWith('user');
         expect(mockedNavigate).toHaveBeenCalledWith('/');
 
-        
+         
 
     });
 });
